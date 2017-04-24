@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  
+
+  <title>Victorian Bubbles</title>
+</head>
+
+<body>
+
+
+
+    <form id="form1" runat="server">
+    <h2>Show Book Bubble</h2>
+        <h2>Click to select node. Double click to un-select!</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<select id="dropdown1">
+    <option value="" disabled="disabled" selected="selected">Please select a name</option>
+    <option value="8">A Christmas Carol</option>
+
+    <option value="2">Bleak House</option>
+    <option value="6">Dune</option>
+    <option value="7">fruit</option>
+    <option value="11">family</option>
+
+
+    <option value="1">Great Expectations</option>
+        <option value="4">Hard Times</option>
+
+    <option value="4">Jane Eyre</option>
+    <option value="4">Jude the Obscure</option>
+
+    <option value="4">Middlemarch</option>
+    <option value="4">Oliver Twist</option>
+
+    <option value="3">Tess of the D'UberVilles</option>
+        <option value="9">The Moonstone</option>
+        <option value="9">The Pickwick Papers</option>
+
+
+        <option value="10">The Tenant of Wildfell Hall</option>
+
+    <option value="4">Vanity Fair</option>
+
+
+
+
+
+</select>
+
+<select id="dropdown2">
+    <option value="" disabled="disabled" selected="selected">Please select a name</option>
+    <option value="8">A Christmas Carol</option>
+
+    <option value="2">Bleak House</option>
+    <option value="6">Dune</option>
+    <option value="7">fruit</option>
+    <option value="11">family</option>
+
+
+    <option value="1">Great Expectations</option>
+        <option value="4">Hard Times</option>
+
+    <option value="4">Jane Eyre</option>
+    <option value="4">Jude the Obscure</option>
+
+    <option value="4">Middlemarch</option>
+    <option value="4">Oliver Twist</option>
+
+    <option value="3">Tess of the D'UberVilles</option>
+        <option value="9">The Moonstone</option>
+        <option value="9">The Pickwick Papers</option>
+
+
+        <option value="10">The Tenant of Wildfell Hall</option>
+
+    <option value="4">Vanity Fair</option>
+
+
+
+
+
+</select>
+    <input type="button" value="Generate Book Bubble" id="getButton" onclick='getFileName()' />
+
+
+    <input type="button" value="refresh" id="getButton" onclick='reloadpage()' />
+        <input type="button" value="show bubble difference" id="getButton" onclick='showdif()' />
+
+
+
+
+<br>
+<br>
+  <input type="radio" name="colour" value="white" onchange="changeColourwhite()"> white<br>
+  <input type="radio" name="colour" value="blue" onchange="changeColourblue()"> blue<br>
+  <input type="radio" name="colour" value="yellow" onchange="changeColouryellow()"> yellow<br>
+   <input type="radio" name="colour" value="pink" onchange="changeColourpink()"> pink<br>
+   <input type="radio" name="colour" value="orange" onchange="changeColourorange()"> orange<br>
+     <input type="radio" name="colour" value="white" onchange="changeColourblack()"> black<br>
+
+
+
+</form>
+
+
+<meta charset="utf-8">
+<style>
+text {
+  font: 10px sans-serif;
+  text-anchor: middle;
+}
+
+</style>
+<svg width="1800" height="100"></svg>
+
+
+<form method="post" action="/action_page_post.php">
+  <label for="points">Points:</label>
+  <input type="range" name="points" id="points" value="50" min="0" max="100">
+
+</form>
+
+
+<script type="text/javascript" src="libs/jquery-3.1.1.
+js"></script>
+<script src="tooltip.js"></script>
+
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<script src="lodash.js"></script>
+
+
+
+
+<script>
+var margin = {top: 10, right: 10, bottom: 10, left: 10},
+  width = 800,
+  height = 800;
+
+function changeColourwhite() {
+    document.getElementsByTagName("BODY")[0].style.backgroundColor = "white";
+}
+function changeColourblue() {
+    document.getElementsByTagName("BODY")[0].style.backgroundColor = "blue";
+}
+function changeColourred() {
+    document.getElementsByTagName("BODY")[0].style.backgroundColor = "red";
+}
+function changeColouryellow() {
+    document.getElementsByTagName("BODY")[0].style.backgroundColor = "yellow";
+}
+function changeColourpink() {
+  console.log("pink");
+    document.getElementsByTagName("BODY")[0].style.backgroundColor = "pink";
+}
+
+function changeColourorange() {
+  console.log("orange");
+    document.getElementsByTagName("BODY")[0].style.backgroundColor = "orange";
+}
+
+function changeColourblack() {
+  console.log("black");
+    document.getElementsByTagName("BODY")[0].style.backgroundColor = "black";
+}
+
+
+
+  /*
+   * Hides Year title displays.
+   */
+  /*function hideYears() {
+    svg.selectAll('.year').remove();
+  }*/
+
+  /*
+   * Shows Year title displays.
+   */
+
+  /*
+   * Function called on mouseover to display the
+   * details of a bubble in the tooltip.
+   */
+
+
+
+
+
+/*
+function hilight(d) {
+
+
+
+if( redVal===("currently-reading")){
+      d3.select(this).attr('stroke', 'red');
+
+
+}
+
+
+}
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+function hilight(d, redval){
+if( redVal===("currently-reading")){
+      d3.select(this).attr('fill', 'green');
+    }
+    console.log("HERE"); 
+
+}
+
+
+function show(d){
+if( this===("currently-reading")){
+      d3.select(this).attr('fill', 'green');
+    }
+    console.log("SHOWING"); 
+
+}
+
+
+
+
+
+
+
+
+
+function showDetail(d) {
+
+    // change outline to indicate hover state.
+    d3.select(this).attr('stroke', 'yellow');
+//    d3.select(this).attr("fill", 'yellow');
+
+
+   // console.log((this).attr(d.id));
+   var sup= d3.select(this).text;
+  console.log(sup);
+
+
+    var content = "hi";
+    //tooltip.showTooltip(content, d3.event);
+  }
+function showClick(d) {
+  
+    // change outline to indicate hover state.
+    d3.select(this).attr('stroke', 'black');
+   // console.log((this).attr(d.id));
+   var sup= d3.select(this);
+      var sup1= d.id;
+
+  //console.log(sup1);
+    //console.log(sup);
+
+
+
+
+    var content = "hi";
+  
+   // tooltip.showTooltip(content, d3.event);
+  }
+
+  function showdbl(d) {
+    // change outline to indicate hover state.
+    d3.select(this).attr('stroke', 'white');
+
+    var content = "hi";
+    //tooltip.showTooltip(content, d3.event);
+  }
+
+
+function hideDetail(d) {
+    // reset outline
+    // reset outline
+    d3.select(this)
+    .style("stroke-width", 0)    // set the stroke width
+   // d3.select(this).attr('stroke', 'black');
+   //     tooltip.hideTooltip();
+
+
+
+
+
+  }
+
+
+
+
+function selectNodesWithProperty(container, key, search){
+
+  d3.selectAll("chart1").on('mouseover', function(thisData) {
+
+  nodes
+          .filter(function (d) { return d.value.id === search; })
+        .attr('fill', 'black');
+});
+}
+ 
+      //.enter().append("g")//keeps apending
+
+      //console.log(container.node);
+
+
+
+
+
+
+
+
+ 
+
+
+     // .filter(function(container) { return d.data.value.id === redVal; });
+
+       // select(function(d, i) { return d[key] === value ? this : -1; }).attr("fill", "yellow");
+
+     //  d3.select(container)
+     //     .attr("fill", "yellow");
+
+    //    console.log("SELECT NODES WITH PROPERTY");
+
+
+
+
+
+
+
+
+
+
+
+
+function bookbubble(filename,filename1){
+  var chart = d3.select("body")
+  .append("svg")
+.attr("width", width )
+    .attr("height", height)
+  .append("g");
+
+         var f = document.getElementById("dropdown2");
+var book2 = f.options[f.selectedIndex].text;
+
+d3.select("svg").append("text")
+    .attr("x", 1200 )
+    .attr("y", 50)
+    .style("text-anchor", "middle")
+           .style("font-size", "50px") 
+        .style("text-decoration", "underline")  
+    .text(book2);
+   //.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+//var svg = d3.select("svg"),
+  //  width = +svg.attr("width");
+    //    height = +svg.attr("height");
+
+
+var format = d3.format(",d");
+
+var color = d3.scaleOrdinal(d3.schemeCategory20c);
+
+
+
+var pack = d3.pack()
+    .size([800, 800])
+    .padding(1.5);//the spaces between the bubbles 1.5 is original changed to 50 
+
+  d3.csv(filename, function(d) {
+    d.value = +d.value;
+    year=d.id
+
+    if (d.value) return d;
+  }, function(error, classes) {
+    if (error) throw error;
+
+    var root = d3.hierarchy({children: classes})
+        .sum(function(d) { return d.value; })
+        .each(function(d) {
+          if (id = d.data.id) {
+            var id, i = id.lastIndexOf(".");
+            d.id = id;// when you hover over the button this is the tag that you see 
+            d.package = id.slice(0, i);
+            d.class = id.slice(i + 1);// i+1 the title of the book that is on the bubble .slice(1) deletes the first letter of the title classics become lassics
+          }
+        });
+
+    var node = chart.selectAll(".node")//I think I need to be modifying something in here :( ________________________________________________________
+
+
+
+
+
+
+
+      .data(pack(root).leaves())
+   //         node.append("g").selectAll("circle")
+     //           .enter()
+       //         .append("circle")
+      .enter().append("g")//keeps apending
+
+        .attr("class", "node")
+        .attr('stroke-width', 1)
+
+      .on('mouseover', function(value){
+
+       d3.select(this)
+
+         .attr("fill", "red");
+
+        redVal= value.id
+
+
+        d3.selectAll(".node")
+              //.data(pack(root).leaves())
+
+
+
+            .filter(function(d) {
+             return d.data.id === redVal }) 
+        .style("fill", "red")       
+         .style("font-size", "200px") 
+        .style("text-decoration", "underline")  
+ 
+      })
+
+
+
+
+
+
+
+                //  .on('mouseover', hilight)
+
+      .on('mouseout', function(d,i){
+        d3.select(this).attr("fill", function() {
+          return "" + "black" + ""; 
+
+              })
+        })
+
+
+      .on('click', showClick)
+       //     .on('dblclick', showdbl)
+ /*  .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended))*/
+
+
+        .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+    node.append("circle")
+        .attr("transform", function(d) { return "translate(" + 0+ "," + 0 + ")"; })
+
+        .attr("id", function(d) { return d.id; })//name on the bubble
+        .attr("r", function(d) { return d.r; })
+        .style("fill", function(d) { return color(d.package); });//appends the circles to the page
+
+
+    node.append("clipPath")
+        .attr("id", function(d) { return "clip-" + d.id; })
+      .append("use")
+        .attr("xlink:href", function(d) { return "#" + d.id; });//makes the text stop within the bubbles
+
+    node.append("text")
+        .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; })
+      .selectAll("tspan")
+      .data(function(d) { return d.class.split(/(?=[A-Z][^A-Z])/g); })
+      .enter().append("tspan")
+        .attr("x", 0)
+        .attr("y", function(d, i, nodes) { return 13 + (i - nodes.length / 2 - 0.5) * 10; })// how high the name of the book is on the bubble
+        .text(function(d) { return d; });//if you comment this out the name on the bubbles dissapear
+
+    node.append("title")
+        .text(function(d) { return d.id + "\n" + format(d.value); });
+/*
+ 
+    function dragstarted(d) {
+  d3.select(this).raise().classed("active", true);
+}
+
+function dragged(d) {
+  d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+}
+
+function dragended(d) {
+  d3.select(this).classed("active", false);
+}
+
+    // Set initial layout to single group.
+*/
+
+
+
+  });
+
+
+  var e = document.getElementById("dropdown1");
+var book1 = e.options[e.selectedIndex].text;
+
+ var chart1 = d3.select("body")
+  .append("svg")
+.attr("width", width )
+    .attr("height", height)
+  .append("g");
+
+d3.select("svg").append("text")
+    .attr("x", 250 )
+    .attr("y", 50)
+    .style("text-anchor", "middle")
+           .style("font-size", "50px") 
+        .style("text-decoration", "underline")  
+    .text(book1);
+
+   //.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+//var svg = d3.select("svg"),
+  //  width = +svg.attr("width");
+    //    height = +svg.attr("height");
+
+
+var format = d3.format(",d");
+
+var color = d3.scaleOrdinal(d3.schemeCategory20c);
+
+
+var pack = d3.pack()
+    .size([800, 800])
+    .padding(1.5);//the spaces between the bubbles 1.5 is original changed to 50 
+
+
+  d3.csv(filename1, function(d) {
+    d.value = +d.value;
+    year=d.id
+
+    if (d.value) return d;
+  }, function(error, classes) {
+    if (error) throw error;
+
+    var root = d3.hierarchy({children: classes})
+        .sum(function(d) { return d.value; })
+        .each(function(d) {
+          if (id = d.data.id) {
+            var id, i = id.lastIndexOf(".");
+            d.id = id;// when you hover over the button this is the tag that you see 
+            d.package = id.slice(0, i);
+            d.class = id.slice(i + 1);// i+1 the title of the book that is on the bubble .slice(1) deletes the first letter of the title classics become lassics
+          }
+        });
+
+
+var yellowVal; 
+    var node = chart1.selectAll(".node")
+      .data(pack(root).leaves())
+   //         node.append("g").selectAll("circle")
+     //           .enter()
+       //         .append("circle")
+      .enter().append("g")//keeps apending
+
+
+        .attr("class", "node")
+        .attr('stroke-width', 1)
+
+
+
+     .on('mouseover', function(d){
+        d3.select(this)
+          .attr("fill", "yellow");
+          var yellowVal= d.id;
+          console.log(yellowVal);
+
+        d3.selectAll(".node")
+              //.data(pack(root).leaves())
+
+
+
+            .filter(function(d) {
+             return d.data.id === yellowVal }) 
+        .style("fill", "yellow")       
+         .style("font-size", "200px") 
+        .style("text-decoration", "underline")  
+
+      })
+
+
+    // change outline to indicate hover state.
+
+//FIND VALUE BY ID 
+      .on('dblclick', function(d){
+
+      var save=d.id; 
+      console.log(save);
+
+        d3.selectAll(".node")
+              //.data(pack(root).leaves())
+
+
+
+            .filter(function(d) {
+             return d.data.id === save }) 
+        .style("fill", "red")       
+         .style("font-size", "100px") 
+        .style("text-decoration", "underline")  
+
+        //d3.selectAll('path[style = "stroke: orange;"]').attr('stroke', 'black');
+
+           // d3.selectAll("g").attr('stroke', 'black');
+
+
+      //.filter(function(d) { return d.id === yellowVal; });
+
+
+      })
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+      .on('mouseout', function(d,i){
+        d3.select(this).attr("fill", function() {
+          return "" + "black" + ""; 
+
+              })
+        })
+    //  .on('click', showClick)
+        //    .on('dblclick', showdbl)
+
+
+        .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+    node.append("circle")
+        .attr("transform", function(d) { return "translate(" + 0+ "," + 0 + ")"; })
+
+        .attr("id", function(d) { return d.id; })//name on the bubble
+        .attr("r", function(d) { return d.r; })
+        .style("fill", function(d) { return color(d.package); });//appends the circles to the page
+
+
+    node.append("clipPath")
+        .attr("id", function(d) { return "clip-" + d.id; })
+      .append("use")
+        .attr("xlink:href", function(d) { return "#" + d.id; });//makes the text stop within the bubbles
+
+
+// THIS IS WHERE I AM TRYING TO ADD A TITLE TO THE BOOK BUBBLE 
+chart1.append("text")
+        .attr("x", (width / 2))             
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")  
+        .style("font-size", "56px") 
+        .style("text-decoration", "underline")  
+        .text(filename);
+
+    node.append("text")
+        .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; })
+      .selectAll("tspan")
+      .data(function(d) { return d.class.split(/(?=[A-Z][^A-Z])/g); })
+      .enter().append("tspan")
+        .attr("x", 0)
+        .attr("y", function(d, i, nodes) { return 13 + (i - nodes.length / 2 - 0.5) * 10; })// how high the name of the book is on the bubble
+        .text(function(d) { return d; });//if you comment this out the name on the bubbles dissapear
+
+    node.append("title")
+        .text(function(d) { return d.id + "\n" + format(d.value); })
+
+
+
+ 
+
+    // Set initial layout to single group.
+
+
+
+
+  });
+
+}
+
+
+
+
+
+function showdif(d) {
+
+
+        d3.selectAll(".node")
+              .data(pack(root).leaves())
+
+            .filter(function(d) {
+             return d.data.id === d.id }) 
+        .style("fill", "red")       
+ 
+
+        //d3.selectAll('path[style = "stroke: orange;"]').attr('stroke', 'black');
+
+           // d3.selectAll("g").attr('stroke', 'black');
+
+
+      //.filter(function(d) { return d.id === yellowVal; });
+
+
+      
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ function getFileName(){
+
+  var e = document.getElementById("dropdown1");
+var book1 = e.options[e.selectedIndex].text;
+       var filename1= book1.replace(/ /g,'');
+       var csvfile1 = filename1.concat(".csv");
+       console.log(csvfile1);
+
+         var f = document.getElementById("dropdown2");
+var book2 = f.options[f.selectedIndex].text;
+       var filename2= book2.replace(/ /g,'');
+       var csvfile2 = filename2.concat(".csv");
+       console.log(csvfile2);
+
+
+   var space= $('#slider').attr('points');
+
+
+console.log(space);
+
+       bookbubble(csvfile1, csvfile2); 
+
+
+
+
+
+}
+
+
+
+
+
+
+</script>
+  </body>
+</html>
